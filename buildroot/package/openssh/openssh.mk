@@ -134,4 +134,9 @@ endef
 OPENSSH_POST_INSTALL_TARGET_HOOKS += OPENSSH_INSTALL_KEY_UTILS
 endif
 
+define OPENSSH_INSTALL_PERMIT_ROOT_LOGIN
+	$(SED) 's/\#PermitRootLogin prohibit-password/PermitRootLogin yes/' $(TARGET_DIR)/etc/ssh/sshd_config
+endef
+OPENSSH_POST_INSTALL_TARGET_HOOKS += OPENSSH_INSTALL_PERMIT_ROOT_LOGIN
+
 $(eval $(autotools-package))
