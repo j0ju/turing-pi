@@ -15,14 +15,14 @@ echo "Date: ${date}"
 
 echo "build fw"
 make -C buildroot V=1
-echo "cp -rf buildroot/output/images/buildroot_linux_nand_uart3.img ./build/${date}/turingpi-${version}.img"
-cp -rf buildroot/output/images/buildroot_linux_nand_uart3.img ./build/${date}/turingpi-${version}.img
+echo "cp -rf buildroot/output/images/buildroot_linux_nand_uart3.img ./build/${date}/turing_pi2_ce-${version}.img"
+cp -rf buildroot/output/images/buildroot_linux_nand_uart3.img ./build/${date}/turing_pi2_ce-${version}.img
 
 cd buildroot/output/images/
 ./genSWU.sh
 cd -
 
-cp -rf ./buildroot/output/images/turingpi_.swu ./build/${date}/turingpi-${version}.swu
+cp -rf ./buildroot/output/images/turing_pi2_ce-${version}.swu ./build/${date}/turing_pi2_ce-${version}.swu
 
 echo "build turing pi firmware over"
 
