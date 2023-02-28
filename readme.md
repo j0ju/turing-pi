@@ -1,4 +1,50 @@
+# About
+```
+ _____ _   _ ____  ___ _   _  ____   ____  ___   ___  
+|_   _| | | |  _ \|_ _| \ | |/ ___| |  _ \|_ _| |_  \ 
+  | | | | | | |_) || ||  \| | |  _  | |_) || |    ) | 
+  | | | |_| |  _ < | || |\  | |_| | |  _ / | |   / /  
+  |_|  \___/|_| \_|___|_| \_|\____| |_|   |___| |___| 
+Community Updates by DhanOS
+```
+This is an **UNOFFICIAL** build of the Turin Pi 2 firmware. Created as a fork of the Turing Pi 2 firmware that can be found [here](https://github.com/wenyi0421/turing-pi). The aim for this project is to add most wanted functionalities before the new official firmware is being created.
+
+Even if it's generally safe to use this firmware, I must mention that the you are using it on your own risk. Neither © TURING MACHINES INC. is not responsible for any possible damage made by this firmware.
+
+<br>
+
+# Changelog and TODO:
+
+The full changelog and TODO can be found on the [changelog page](changelog.md).
+
+The most important changes:
+- [x] Add SSH root logins
+- [x] Set static MAC address (`12:34:56:78:9A:BC`)
+- [x] Add `ntp` and `ntpd` (automatic time synchronization from the internet)
+- [ ] Add login/password protection to the webpanel
+- [ ] Add an ability to set the MAC address read from the SD card
+- [ ] Add an ability to set the IP address read from the SD card
+- [ ] Synhcronize the hardware clock when the system clock is being set
+- [ ] Fix possible buffer-overflow errors found in the firmware
+
+<br>
+
+# Installing the firmware
+
+The easiest way to install the firmware is to download the `swu` file from the [latest release](https://github.com/daniel-kukiela/turing-pi2-community-firmware/releases) and upgrade it through the web panel:
+<img src="https://help.turingpi.com/hc/article_attachments/8848581719453" width="50%">
+
+In general, the upgrade process is the same as with the original fimrmware and the more detailed instructions can be found in the [Turing Pi documentation](https://help.turingpi.com/hc/en-us/articles/8686945524893-Baseboard-Management-Controller-BMC-).
+
+<br>
+
+# Compiling the firmware
+
+You can compile the formware on your own and the steps to follow are similar to the steps to compile the original firmware.
+
 ## Install the necessary dependent packages
+
+
 
 ```makefile
 sudo apt-get install build-essential subversion git-core libncurses5-dev zlib1g-dev gawk flex quilt libssl-dev xsltproc libxml-parser-perl mercurial bzr ecj cvs unzip lib32z1 lib32z1-dev lib32stdc++6 libstdc++6 libncurses-dev u-boot-tools mkbootimg -y
@@ -27,13 +73,14 @@ cd buildroot
 make linux-rebuild
 make swupdate-rebuild
 
-make V=1	//build img
+make V=1
 
 //build swu
 cd output/images/
-./genSWU.sh 1.0.0	//build swu
+./genSWU.sh
 
-//Execute mkfw.sh 1.0.0 in the root directory to directly compile the firmware to the build directory
-./mkfw.sh 1.0.0 
+//generate the images
+cd ../../../
+./mkfw.sh
 
 ```
