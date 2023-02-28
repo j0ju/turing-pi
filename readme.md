@@ -31,7 +31,7 @@ The most important changes:
 
 # Installing the firmware
 
-The easiest way to install the firmware is to download the `swu` file from the [latest release](https://github.com/daniel-kukiela/turing-pi2-community-firmware/releases) and upgrade it through the web panel:
+The easiest way to install the firmware is to download the `swu` file from the [latest release](https://github.com/daniel-kukiela/turing-pi2-community-firmware/releases) and upgrade it through the web panel:    
 <img src="https://help.turingpi.com/hc/article_attachments/8848581719453" width="50%">
 
 In general, the upgrade process is the same as with the original fimrmware and the more detailed instructions can be found in the [Turing Pi documentation](https://help.turingpi.com/hc/en-us/articles/8686945524893-Baseboard-Management-Controller-BMC-).
