@@ -2,7 +2,7 @@
 
 date=`date +%F`
 
-version="0.0.1-wip"
+version="0.1.0-wip"
 
 if [ 1 != $# ]; then
 	echo please input version
