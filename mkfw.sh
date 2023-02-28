@@ -2,7 +2,7 @@
 
 date=`date +%F`
 
-version="0.1.0-wip"
+version="0.2.0-wip"
 
 if [ ! -d "build/${date}" ];then
     echo "mkdir build/${date}"
