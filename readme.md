@@ -28,6 +28,7 @@ The most important changes:
 - [ ] Add an ability to set the IP address read from the SD card
 - [ ] Synhcronize the hardware clock when the system clock is being set
 - [ ] Fix possible buffer-overflow errors found in the firmware
+- [ ] Add timezone settings for the time to be set correctly
 
 <br>
 
