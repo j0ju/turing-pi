@@ -7,9 +7,9 @@
   |_|  \___/|_| \_|___|_| \_|\____| |_|   |___| |___| 
 Community Updates by DhanOS
 ```
-This is an **UNOFFICIAL** build of the Turin Pi 2 firmware. Created as a fork of the Turing Pi 2 firmware that can be found [here](https://github.com/wenyi0421/turing-pi). The aim for this project is to add most wanted functionalities before the new official firmware is being created.
+This is an **UNOFFICIAL** build of the Turing Pi 2 firmware. Created as a fork of the [original Turing Pi 2 firmware](https://github.com/wenyi0421/turing-pi). The aim for this project is to add the most wanted functionalities before the new official firmware is being created.
 
-Even if it's generally safe to use this firmware, I must mention that the you are using it on your own risk. Neither © TURING MACHINES INC. is not responsible for any possible damage made by this firmware.
+Even if it's generally safe to use this firmware, I must mention that you are using it on your own risk. Neither TURING MACHINES INC. nor me are not responsible for any possible damage made by this firmware.
 
 While this is never necessary, if you like my work, you can consider [buying me a coffee](https://ko-fi.com/dhanos) and keep me fueled for longer :)
 
