@@ -2,3 +2,5 @@ buildroot/output/
 build/*
 !build/tpi
 app/board/*
+buildroot/..config.tmp
+buildroot/.config.old
