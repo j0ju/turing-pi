@@ -37,7 +37,7 @@ cd buildroot/output/images/
 ./genSWU.sh
 cd -
 
-cp -rf ./buildroot/output/images/turingpi_.swu ./build/${date}/turingpi-${version}.swu
+mv -f ./buildroot/output/images/turingpi_.swu ./build/${date}/turingpi-${version}.swu
 
 echo "build turing pi firmware over"
 if [ ! -f "build/tpi/linux/tpi" ];then
