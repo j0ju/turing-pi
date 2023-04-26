@@ -4,3 +4,5 @@ build/*
 app/board/*
 buildroot/..config.tmp
 buildroot/.config.old
+buildroot/.config
+app/bmc/version.h
