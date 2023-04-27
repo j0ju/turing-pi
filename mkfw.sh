@@ -30,8 +30,9 @@ echo "Date: ${date}"
 echo "build fw"
 make -C buildroot bmc-rebuild V=1
 make -C buildroot V=1
-echo "cp -rf buildroot/output/images/buildroot_linux_nand_uart3.img ./build/${date}/turingpi-${version}.img"
-cp -rf buildroot/output/images/buildroot_linux_nand_uart3.img ./build/${date}/turingpi-${version}.img
+( set -x
+  cp -rf buildroot/output/images/buildroot_linux_nand_uart3.img ./build/${date}/turingpi-${version}.img
+)
 
 cd buildroot/output/images/
 ./genSWU.sh
