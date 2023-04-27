@@ -1,0 +1,51 @@
+#!/bin/sh
+set -e
+
+# uses fw_printenv and fw_setenv to persist a mac address
+
+#- example environment 
+#   METHOD=dhcp
+#   MODE=start
+#   PHASE=pre-up
+#   ADDRFAM=inet
+#   IFACE=eth0
+#   IF_UBOOT_HWADDRESS=yes
+
+ALLWINNER_OUI_PFX=dc:44:6d
+
+case "$IF_UBOOT_HWADDRESS" in
+  no | NO | n | N | 0 | off | OFF | "" )
+    return 0
+    ;;
+  yes | YES | y | Y | 1 | on | ON )
+    IF_UBOOT_HWADDRESS="mac_$IFACE" 
+    ;;
+esac
+    
+get_MAC() {
+  MAC="$(fw_printenv | grep -E "^$IF_UBOOT_HWADDRESS=[a-fA-F0-9]{2}:[a-fA-F0-9]{2}:[a-fA-F0-9]{2}:[a-fA-F0-9]{2}:[a-fA-F0-9]{2}:[a-fA-F0-9]{2}$")"
+  MAC="${MAC#$IF_UBOOT_HWADDRESS=}"
+}
+
+set_MAC() {
+  ip link set down dev "$IFACE"
+  ip link set addr "$MAC" dev "$IFACE"
+  echo "$IFACE: set mac address $MAC" >&2
+}
+
+case "$MODE:$PHASE:$IF_UBOOT_HWADDRESS" in
+  start:pre-up:?* )
+    get_MAC || :
+    if [ -z "$MAC" ]; then
+      #- no valid MAC found generate aand set a fresh one
+      head -c 3 /dev/urandom | hexdump -C | ( 
+        read _ a b c _ 
+        MAC="$ALLWINNER_OUI_PFX:$a:$b:$c"
+        fw_setenv "$IF_UBOOT_HWADDRESS" "$MAC"
+        echo "$IFACE: persisted mac address $MAC in UBoot" >&2
+      )
+      get_MAC
+    fi
+    set_MAC
+    ;; 
+esac
