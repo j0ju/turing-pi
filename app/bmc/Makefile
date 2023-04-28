@@ -3,7 +3,7 @@ LDLIBS += -L./lib/ -lpthread -lgo -lcjson
  
 all: bmc
  
-bmc:  bmc.o comm_gpio.o param.o webserver.o  comm_device_serial.o
+bmc:  bmc.o comm_gpio.o param.o webserver.o  comm_device_serial.o version.h
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 	#cp $@ ~/tftpboot/
  
