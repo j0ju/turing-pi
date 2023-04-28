@@ -3,11 +3,11 @@ set -e
 
 INIT_FLAG=./buildroot/output/.mkfw.init
 
-date=`date +%F`
-version=$1
+DATE="$(date +%F)"
+VERSION=$1
 
 if [ 1 != $# ]; then
-	echo please input version
+	echo 'E: $1 must be version number for this build, ABORT' >&2
   exit 1
 fi
 
@@ -16,32 +16,37 @@ if [ ! -f "$INIT_FLAG" ]; then
   : > "$INIT_FLAG"
 fi
 
-echo  "/* This file is auto generated. do not modify */ 
-#define BMCVERSION \"${version}\"
-#define BUILDTIME \"${date}\" " > app/bmc/version.h
+cat > app/bmc/version.h <<EOF
+/* This file is auto generated. do not modify */ 
+#define BMCVERSION "${VERSION}"
+#define BUILDTIME "${DATE}"
+EOF
 
-if [ ! -d "build/${date}" ];then
-    echo "mkdir build/${date}"
-    mkdir -p "build/${date}"
+if [ ! -d "build/${DATE}" ];then
+  mkdir -p "build/${DATE}"
 fi
 
 echo "----- make fw -----" 
-echo "Version: ${version}" 
-echo "Date: ${date}"
+echo "Version: ${VERSION}" 
+echo "Date: ${DATE}"
 
 echo "build fw"
-make -C buildroot bmc-rebuild V=1
-make -C buildroot linux-rebuild V=1
-make -C buildroot V=1
+
+#- rebuild all stuff for image
 ( set -x
-  cp -rf buildroot/output/images/buildroot_linux_nand_uart3.img ./build/${date}/turingpi-${version}.img
+  cd buildroot
+  make linux-rebuild
+  make swupdate-rebuild
+  make bmc-rebuild
+  make V=1
 )
 
-cd buildroot/output/images/
-./genSWU.sh
-cd -
+cp -rf buildroot/output/images/buildroot_linux_nand_uart3.img ./build/${DATE}/turingpi-${VERSION}.img
 
-mv -f ./buildroot/output/images/turingpi_.swu ./build/${date}/turingpi-${version}.swu
+( cd buildroot/output/images/
+  ./genSWU.sh
+)
+mv -f ./buildroot/output/images/turingpi_.swu ./build/${DATE}/turingpi-${VERSION}.swu
 
 echo "build turing pi firmware CLI"
 if [ ! -f "build/tpi/linux/tpi" ];then

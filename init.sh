@@ -10,7 +10,6 @@ set -e
 ( set -x
   cd buildroot
   make BR2_EXTERNAL="../br2t113pro"  100ask_t113-pro_spinand_core_defconfig
-  make cjson-rebuild
   make V=1
 
   cp ../bmc4tpi/config/sun8iw20p1*  output/build/linux-5112fdd843715f1615703ca5ce2a06c1abe5f9ee/arch/arm/boot/dts/
@@ -24,14 +23,5 @@ set -e
   cp bmc4tpi/swupdate/genSWU.sh buildroot/output/images/
   cp bmc4tpi/swupdate/env0.fex buildroot/output/images/
   cp bmc4tpi/swupdate/env1.fex buildroot/output/images/
-)
-
-#- rebuild all stuff for initial image
-( set -x
-  cd buildroot
-  make linux-rebuild
-  make swupdate-rebuild
-  make bmc-rebuild
-  make V=1
 )
 
