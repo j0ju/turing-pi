@@ -9,18 +9,8 @@ set -e
 #   PHASE=pre-up
 #   ADDRFAM=inet
 #   IFACE=eth0
-#   IF_UBOOT_HWADDRESS=yes
 
-ALLWINNER_OUI_PFX=dc:44:6d
-
-case "$IF_UBOOT_HWADDRESS" in
-  no | NO | n | N | 0 | off | OFF | "" )
-    return 0
-    ;;
-  yes | YES | y | Y | 1 | on | ON )
-    IF_UBOOT_HWADDRESS="mac_$IFACE" 
-    ;;
-esac
+IF_UBOOT_HWADDRESS="mac_$IFACE" 
     
 get_MAC() {
   MAC="$(fw_printenv | grep -E "^$IF_UBOOT_HWADDRESS=[a-fA-F0-9]{2}:[a-fA-F0-9]{2}:[a-fA-F0-9]{2}:[a-fA-F0-9]{2}:[a-fA-F0-9]{2}:[a-fA-F0-9]{2}$")"
