@@ -1,0 +1,87 @@
+#!/bin/sh
+
+ZRAM_ENABLED=0
+ZRAM_SIZE=24m
+ZRAM_COMP_ALGO=
+
+# Source zram configuration.
+[ -r '/etc/default/zram' ] &&  . /etc/default/zram
+
+log_die() {
+  echo "FAIL [rc $1]"
+  exit $1
+}
+
+start()
+{
+  if [ "$ZRAM_ENABLED" -gt 0 ]; then
+    params_set="num_devices=1"
+
+    echo -n "Loading zram"
+    modprobe zram $params_set || log_die $?
+
+    for i in 1 2 3 4 5; do
+      [ ! -f /sys/class/block/zram0/size ] || break
+      sleep 1
+    done
+    [ -f /sys/class/block/zram0/size ] || log_die $?
+
+    case "$ZRAM_SIZE" in
+      *% )    MEM_TOTAL="$(awk -F'[ :]+' '/^MemTotal/ {print $2}'  /proc/meminfo)"
+              size=$(( MEM_TOTAL * 1024 * ${ZRAM_SIZE%[%]} / 100 )) ;;
+      *[Kk] ) size=$(( ${ZRAM_SIZE%k} * 1024 )) ;;
+      *[Mm] ) size=$(( ${ZRAM_SIZE%m} * 1024 * 1024 )) ;;
+      *[Gg] ) size=$(( ${ZRAM_SIZE%g} * 1024 * 1024 * 1024 )) ;;
+      * )     size=${ZRAM_SIZE}
+    esac
+    echo 1     > /sys/block/zram0/reset || log_die $?
+
+    case "$ZRAM_COMP_ALGO:$(cat /sys/block/zram0/comp_algorithm)" in
+      :* ) : NOP ;;
+      *:*"$ZRAM_COMP_ALGO"* )
+        echo "$ZRAM_COMP_ALGO" > /sys/block/zram0/comp_algorithm
+        ;;
+      * ) : NOP ;;
+    esac
+
+    echo $size > /sys/block/zram0/disksize || log_die $?
+
+    mkswap /dev/zram0 > /dev/null || log_die $?
+    swapon /dev/zram0 || log_die $?
+
+    echo "OK"
+  fi
+}
+
+stop()
+{
+  echo -n "Stopping zram"
+
+  if status; then
+    swapoff /dev/zram0 > /dev/null
+    sleep 1
+  fi
+  modprobe -r zram > /dev/null
+
+  echo "OK"
+}
+
+restart() {
+  stop
+  start
+}
+
+status()                                                                                                                                      {
+  grep zram0 /proc/swaps
+}
+
+case "$1" in
+  start | stop | status | restart )
+    "$1"
+    RETVAL=$?
+    ;;
+  *)
+    echo $"Usage: $0 {start|stop|status|restart}"
+    ;;
+esac
+
