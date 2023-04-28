@@ -1,39 +1,66 @@
 ## Install the necessary dependent packages
 
-```makefile
+On Ubuntu or Debian-alikes you can install needed packages:
+
+```
 sudo apt-get install build-essential subversion git-core libncurses5-dev zlib1g-dev gawk flex quilt libssl-dev xsltproc libxml-parser-perl mercurial bzr ecj cvs unzip lib32z1 lib32z1-dev lib32stdc++6 libstdc++6 libncurses-dev u-boot-tools mkbootimg -y
 ```
 
-## build
+## Build
 
-```makefile
-cd buildroot
-make   BR2_EXTERNAL="../br2t113pro"  100ask_t113-pro_spinand_core_defconfig
-make cjson-rebuild
-make V=1
+This script builds the buildroot image and adds the tiny bits from the 
+original documentation at https://github.com/wenyi0421/turing-pi and 
+TinaLinux for the Allwinn T113-S3 CPU to build an image to flash.
 
-//update config  //Only once
-cd ../
-cp bmc4tpi/config/sun8iw20p1* buildroot/output/build/linux-5112fdd843715f1615703ca5ce2a06c1abe5f9ee/arch/arm/boot/dts/
-cp bmc4tpi/config/kernelconfig buildroot/output/build/linux-5112fdd843715f1615703ca5ce2a06c1abe5f9ee/.config
-cp bmc4tpi/config/swupdateconfig buildroot/output/build/swupdate-2021.11/.config
-cp bmc4tpi/swupdate/sw-description buildroot/output/images/
-cp bmc4tpi/swupdate/genSWU.sh buildroot/output/images/
-cp bmc4tpi/swupdate/env0.fex buildroot/output/images/
-cp bmc4tpi/swupdate/env1.fex buildroot/output/images/
+The BMC displays a version number via WebInterface or API. Currently you have 
+to specify as version string. e.g build you own images based with own version
+scheme.
 
-//rebuild 
-cd buildroot
-make linux-rebuild
-make swupdate-rebuild
-
-make V=1	//build img
-
-//build swu
-cd output/images/
-./genSWU.sh 1.0.0	//build swu
-
-//Execute mkfw.sh 1.0.0 in the root directory to directly compile the firmware to the build directory
-./mkfw.sh 1.0.0 
+The output of this process is stored in `./build/<CURRENT DATE yyyy-mm-dd>/`.
+The files built are:
+ * `turingpi-<VERSION>.swu`, this file only contains the root file system for
+   update via the webinterface.
+   (see https://help.turingpi.com/hc/en-us/articles/8686945524893-Baseboard-Management-Controller-BMC-#f4364f3c)
+ * `turingpi-<VERSION>.img`, this file is an full flash image to be flashed 
+    via LiveSuit.
+    (see https://help.turingpi.com/hc/en-us/articles/8686945524893-Baseboard-Management-Controller-BMC-#fcaef23)
 
 ```
+sh mkfw.sh <VERSION>
+```
+
+### Notes
+
+ * Persisten Random MAC address is store in UBoot in this image. As long you only do
+   upgrades via the BMC web interface, the MAC address is retained.
+
+ * Limited sizes, Flash partitioning: We currently only have 32MB, root file system is in
+   an UBI container `ubi0_5` and `ubi0_6`. The latter is the recovery 
+   partition, which has some megabyte less space available.
+   If the root filesystem is to big, because eg. to many more packages 
+   have been added, then either the build process fails, the the image does
+   not boot or flashing via BMC web interface might not be able to flash 
+   images anymore.
+   If the root filesystem is too large the recovery partition might not be
+   created in the .img file.
+
+ * The kernel will only be updated by flashing the `.img`.
+
+### Adding own stuff
+
+After doing an initial build via `mkfw.sh`, you can add more packages.
+Change into the `buildroot` directory.
+
+ * `make menuconfig` - Add and remove packages
+ * `make linux-menuconfig` - Change kernel or module config
+
+## Troubleshooting
+
+ * Serial Console: if you cannot enter the serial console of UBoot although
+   a bootdelay>0 is configured flash the `.img` once.
+ * Brick/UBoot: if you flashed an image the does not boot anymore, so that
+   upgrades via BMC or flashing the `.img` are not possible anymore. You can
+   try to enter UBoot via connected serial console.
+   The UBoot contains an command to enter the `Android Upgrade Mode` for flashing
+   via PhoenixSuit or LiveSuit. The command is `efex`.
+
