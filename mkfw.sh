@@ -1,17 +1,19 @@
 #!/bin/sh
+set -e
+
+INIT_FLAG=./buildroot/output/.mkfw.init
 
 date=`date +%F`
-
 version=$1
 
 if [ 1 != $# ]; then
 	echo please input version
+  exit 1
 fi
-echo $1 |grep "^[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}$" > /dev/null
-if [ $? = 1 ];then
-	echo version 0~999 and must 3 version eg:1.1.1
-	echo ./mkfw.sh "<version>"
-	exit 1
+
+if [ ! -f "$INIT_FLAG" ]; then
+  . ./init.sh
+  : > "$INIT_FLAG"
 fi
 
 echo  "/* This file is auto generated. do not modify */ 
