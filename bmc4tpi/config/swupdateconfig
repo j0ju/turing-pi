@@ -94,6 +94,7 @@ CONFIG_PARSERROOT=""
 #
 # JSON config parser support needs json-c
 #
+# CONFIG_JSON is not set
 # CONFIG_SETSWDESCRIPTION is not set
 
 #
