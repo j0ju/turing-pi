@@ -32,6 +32,7 @@ CONFIG_MTD=y
 #
 # Lua support needs a Lua interpreter
 #
+# CONFIG_LUA is not set
 # CONFIG_FEATURE_SYSLOG is not set
 
 #
@@ -82,6 +83,7 @@ CONFIG_MONGOOSEIPV6=y
 # SSL support needs an SSL implementation
 #
 CONFIG_GUNZIP=y
+# CONFIG_ZSTD is not set
 
 #
 # Parser Features
