@@ -11,29 +11,30 @@ if [ -z "$1" ]; then
   # YYYY-MM-DD-GITREV-DIRTYFLAG
   # GITREV is either a short commit hash or tag if tagged
 
-  VERSION="$(date +%F)-$(git rev-parse --short HEAD 2> /dev/null)"
-  # dirty check
   if git status -s | grep ^ > /dev/null; then
-    VERSION="$VERSION+dirty"
+    # dirty check
+    VERSION="$(date +%F)-$(git rev-parse --abbrev-ref HEAD 2> /dev/null)-$(git rev-parse --short HEAD 2> /dev/null)+dirty"
     INC=0
     while [ -f ./build/${DATE}/turingpi-${VERSION}~$INC.img ]; do
       INC=$(( INC + 1 ))
     done
     VERSION="$VERSION~$INC"
+  else
+    VERSION="$(date +%F)-$(git rev-parse --abbrev-ref HEAD 2> /dev/null)-$(git rev-parse --short HEAD 2> /dev/null)"
   fi
 fi
 echo "I: Using version $VERSION for this build."
-
-if [ ! -f "$INIT_FLAG" ]; then
-  . ./init.sh
-  : > "$INIT_FLAG"
-fi
 
 cat > app/bmc/version.h <<EOF
 /* This file is auto generated. do not modify */
 #define BMCVERSION "${VERSION}"
 #define BUILDTIME "${DATE}"
 EOF
+
+if [ ! -f "$INIT_FLAG" ]; then
+  . ./init.sh
+  : > "$INIT_FLAG"
+fi
 
 if [ ! -d "build/${DATE}" ];then
   mkdir -p "build/${DATE}"
@@ -67,5 +68,5 @@ if [ ! -f "build/tpi/linux/tpi" ];then
 	gcc app/tpi/tpi.c -o build/tpi/linux/tpi
 fi
 
-find "build/$DATE" -type f -exec ls -lt {} +
+find "build/$DATE" -type f -exec ls -lt {} + |  grep -E --color '[^ ]+(.swu|.img)$'
 
