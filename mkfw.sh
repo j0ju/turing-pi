@@ -4,12 +4,25 @@ set -e
 INIT_FLAG=./buildroot/output/.mkfw.init
 
 DATE="$(date +%F)"
-VERSION=$1
+VERSION="$1"
+if [ -z "$1" ]; then
+  echo "I: no version given as first parameter, auto generating version."
+  # compose build version
+  # YYYY-MM-DD-GITREV-DIRTYFLAG
+  # GITREV is either a short commit hash or tag if tagged
 
-if [ 1 != $# ]; then
-	echo 'E: $1 must be version number for this build, ABORT' >&2
-  exit 1
+  VERSION="$(date +%F)-$(git rev-parse --short HEAD 2> /dev/null)"
+  # dirty check
+  if git status -s | grep ^ > /dev/null; then
+    VERSION="$VERSION+dirty"
+    INC=0
+    while [ -f ./build/${DATE}/turingpi-${VERSION}~$INC.img ]; do
+      INC=$(( INC + 1 ))
+    done
+    VERSION="$VERSION~$INC"
+  fi
 fi
+echo "I: Using version $VERSION for this build."
 
 if [ ! -f "$INIT_FLAG" ]; then
   . ./init.sh
@@ -17,7 +30,7 @@ if [ ! -f "$INIT_FLAG" ]; then
 fi
 
 cat > app/bmc/version.h <<EOF
-/* This file is auto generated. do not modify */ 
+/* This file is auto generated. do not modify */
 #define BMCVERSION "${VERSION}"
 #define BUILDTIME "${DATE}"
 EOF
@@ -26,8 +39,8 @@ if [ ! -d "build/${DATE}" ];then
   mkdir -p "build/${DATE}"
 fi
 
-echo "----- make fw -----" 
-echo "Version: ${VERSION}" 
+echo "----- make fw -----"
+echo "Version: ${VERSION}"
 echo "Date: ${DATE}"
 
 echo "build fw"
@@ -53,4 +66,6 @@ if [ ! -f "build/tpi/linux/tpi" ];then
 	mkdir -p build/tpi/linux
 	gcc app/tpi/tpi.c -o build/tpi/linux/tpi
 fi
+
+find "build/$DATE" -type f -exec ls -lt {} +
 
