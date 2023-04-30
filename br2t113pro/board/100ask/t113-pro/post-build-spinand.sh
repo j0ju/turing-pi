@@ -17,6 +17,7 @@
 
   ROOT_DIR="$BASE_DIR/target"
   MODULES_DIR="$BASE_DIR/target_modules"
+  STAGING_DIR="$BASE_DIR/staging"
 
   mkdir -p "$MODULES_DIR"
 
@@ -30,6 +31,22 @@
     rm -rf "${dst%/*}/${d##*/}"
     mkdir -p "${dst%/*}"
     mv -fv "$d" "${dst%/*}"
+  done
+
+
+#- fix mkfs.vfat, ensure the libgconf has neede files
+  # FIXME: implement that properly
+  GCONF_PREFIX=/usr/lib/gconv
+  GCONF_FILES=
+  GCONF_FILES="$GCONF_FILES gconv-modules"
+  GCONF_FILES="$GCONF_FILES IBM437.so"
+  GCONF_FILES="$GCONF_FILES IBM850.so"
+  GCONF_FILES="$GCONF_FILES ISO8859-1.so"
+  GCONF_FILES="$GCONF_FILES ISO8859-15.so"
+  mkdir -p "$ROOT_DIR/$GCONF_PREFIX"
+  for f in $GCONF_FILES; do
+    cp -a "$STAGING_DIR/$GCONF_PREFIX/$f" "$ROOT_DIR/$GCONF_PREFIX/$f"
+    chmod 0644 "$ROOT_DIR/$GCONF_PREFIX/$f"
   done
 
 
