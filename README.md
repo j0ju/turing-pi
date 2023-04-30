@@ -6,6 +6,14 @@ On Ubuntu or Debian-alikes you can install needed packages:
 sudo apt-get install build-essential subversion git-core libncurses5-dev zlib1g-dev gawk flex quilt libssl-dev xsltproc libxml-parser-perl mercurial bzr ecj cvs unzip lib32z1 lib32z1-dev lib32stdc++6 libstdc++6 libncurses-dev u-boot-tools mkbootimg -y
 ```
 
+## Features
+
+ * random stable MAC address as long only `.swu` files are flashed
+ * tpi tool is able 
+ * adb and most of the image works on a to read-only filesystem eg. on full flash, besides ssh, eg.
+   the webinterface and flashin via web interface, and adb for LiveSuit
+ * Kernel is updated in case of `.img` flashes extending the kernel with some features for playing around.
+
 ## Build
 
 This script builds the buildroot image and adds the tiny bits from the 
@@ -29,6 +37,10 @@ The files built are:
 sh mkfw.sh <VERSION>
 ```
 
+VERSION is optional, currently it genereates a version number out the date and git informations.
+ * if you are on a clean repository, the auto version string will be DATE-GITREV-GITHASH, where GITREV is either tag or branch
+ * is the repository dirty on call of `mkfs.sh` the versioning scheme is DATE-GITREV-GITHASH+dirty~BUILDNUM, where GITREV is a branch
+
 ### Notes
 
  * Persisten Random MAC address is store in UBoot in this image. As long you only do
@@ -45,7 +57,7 @@ sh mkfw.sh <VERSION>
    created in the .img file.
 
  * The kernel will only be updated by flashing the `.img`.
-
+ 
 ### Adding own stuff
 
 After doing an initial build via `mkfw.sh`, you can add more packages.
@@ -53,6 +65,16 @@ Change into the `buildroot` directory.
 
  * `make menuconfig` - Add and remove packages
  * `make linux-menuconfig` - Change kernel or module config
+
+### Flash via SSH
+
+ `flash.sh` allows to flash the `.swu` via SSH.
+
+ Usage:
+ > `flash.sh IMAGE HOSTSPEC`
+
+ Where IMAGE is the PATH to an image file and HOSTSPEC is a SSH compatible string to login to the BMC, like root@turing.example.com.
+
 
 ## Troubleshooting
 
