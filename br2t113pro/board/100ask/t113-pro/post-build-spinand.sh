@@ -43,8 +43,11 @@
   GCONF_FILES="$GCONF_FILES IBM850.so"
   GCONF_FILES="$GCONF_FILES ISO8859-1.so"
   GCONF_FILES="$GCONF_FILES ISO8859-15.so"
+
   mkdir -p "$ROOT_DIR/$GCONF_PREFIX"
   for f in $GCONF_FILES; do
+    [ -f "$f" ] || \
+      continue
     cp -a "$STAGING_DIR/$GCONF_PREFIX/$f" "$ROOT_DIR/$GCONF_PREFIX/$f"
     chmod 0644 "$ROOT_DIR/$GCONF_PREFIX/$f"
   done
