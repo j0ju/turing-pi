@@ -2,10 +2,11 @@
 set -e
 
 INIT_FLAG=./buildroot/output/.mkfw.init
+CLEAN="${CLEAN:-no}"
 
 DATE="$(date +%F)"
-VERSION="$1"
-if [ -z "$1" ]; then
+VERSION="${1:-}"
+if [ -z "${VERSION}" ]; then
   echo "I: no version given as first parameter, auto generating version."
   # compose build version
   # YYYY-MM-DD-GITREV-DIRTYFLAG
@@ -30,6 +31,12 @@ cat > app/bmc/version.h <<EOF
 #define BMCVERSION "${VERSION}"
 #define BUILDTIME "${DATE}"
 EOF
+
+if [ "${CLEAN}" = yes ]; then
+  ( cd buildroot
+    make distclean
+  )
+fi
 
 if [ ! -f "$INIT_FLAG" ]; then
   . ./init.sh
