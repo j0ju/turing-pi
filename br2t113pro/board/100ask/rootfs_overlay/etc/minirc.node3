@@ -1,0 +1,11 @@
+# Machine-generated file - use "minicom -s" to change parameters.
+pu port             /dev/ttyS4
+pu mdialpre         
+pu mdialsuf         
+pu mdialpre2        
+pu mdialsuf2        
+pu mdialpre3        
+pu mdialsuf3        
+pu mhangup          
+pu escape-key       ^X           
+pu rtscts           No 
